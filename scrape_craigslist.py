@@ -8,6 +8,8 @@ from read_site import antiques_scrape
 import requests
 from splinter import Browser
 from webdriver_manager.chrome import ChromeDriverManager
+import html
+from IPython.display import HTML
 
 # create instance of Flask app
 app = Flask(__name__)
@@ -27,8 +29,11 @@ def echo_hello():
 @app.route("/all")
 def all():
     try:
-        data = pd.read_csv("antiques_cl.csv")
-        return data.to_html(header='true', table_id=tables)
+        df = pd.read_csv("antiques_cl.csv")
+        html_table = HTML(df.to_html(justify="center",
+                          classes="table table-striped", index=False))
+        return render_template('index.html', data=html_table)
+        # return df.to_html(header='true', table_id=tables)
     except FileNotFoundError:
         return "Use /scrape first to obtain data"
     except AttributeError as e:
